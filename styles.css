@@ -1607,17 +1607,41 @@ body {
 
 /* Xiaomi 11T Pro and other tall Android phones */
 @media (max-width: 430px) and (min-height: 800px) {
-    /* ULTIMATE DEBUG FIX - ADD RED BORDER TO SEE WHAT'S HAPPENING */
+    /* ULTIMATE COMPREHENSIVE DEBUG - SEE ALL CONTAINERS */
+    .slide.memory-slide {
+        border: 5px solid blue !important;
+        background: lightblue !important;
+        width: 100vw !important;
+        margin: 0 !important;
+        padding: 1rem 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    .memory-slide .image-container {
+        border: 3px solid green !important;
+        background: lightgreen !important;
+        margin: 1rem auto !important;
+    }
+    
     .memory-slide .caption {
         border: 5px solid red !important;
         background: yellow !important;
-        margin: 0 auto !important;
+        margin: 1rem auto !important;
         width: 80% !important;
         text-align: center !important;
         display: block !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        position: relative !important;
+        position: static !important;
+        transform: none !important;
+    }
+    
+    .memory-slide .caption-content {
+        border: 2px solid purple !important;
+        background: pink !important;
+        text-align: center !important;
+        padding: 1rem !important;
     }
     
     /* NUCLEAR CENTERING FOR XIAOMI */
