@@ -1187,6 +1187,34 @@ body {
 
 /* === CONSOLIDATED MOBILE LAYOUT (max-width: 768px) === */
 @media (max-width: 768px) {
+    /* === MOBILE FALLBACK: Stack all slides vertically (avoid blank screens) === */
+    body.mobile-fallback-enabled #slideshow .slideshow-container,
+    #slideshow.mobile-fallback .slideshow-container {
+        height: auto !important;
+        overflow: visible !important;
+    }
+    body.mobile-fallback-enabled .slide,
+    #slideshow.mobile-fallback .slide {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: unset !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        pointer-events: auto !important;
+        margin: 0 0 2.5rem 0 !important;
+    }
+    body.mobile-fallback-enabled .slide-background { position: absolute; inset:0; }
+    body.mobile-fallback-enabled .nav,
+    body.mobile-fallback-enabled .progress-bar,
+    #slideshow.mobile-fallback .nav,
+    #slideshow.mobile-fallback .progress-bar { display: none !important; }
+
+    /* Fix memory slide images collapsing (parent height auto + img at 100%) */
+    .memory-slide .image-container { height: auto !important; }
+    .memory-slide .image-container img { height: auto !important; width:100%; display:block; object-fit: cover; }
+
     /* General slide adjustments */
     .slide {
         position: absolute; /* retain active toggling */

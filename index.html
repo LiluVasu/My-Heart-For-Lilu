@@ -316,5 +316,30 @@
     </div>
 
     <script src="script.js"></script>
+        <script>
+        // Lightweight mobile fallback: if after 1s only first slide has height, stack all
+        (function(){
+            function enableFallback(){
+                var ss = document.getElementById('slideshow');
+                if(ss) ss.classList.add('mobile-fallback');
+                document.body.classList.add('mobile-fallback-enabled');
+            }
+            function checkSlides(){
+                var slides = document.querySelectorAll('#slideshow .slide');
+                if(!slides.length) return;
+                // if viewport width < 820 and more than one slide but non-active slides have 0 height -> fallback
+                if(window.innerWidth < 820){
+                    var invisibleCount = 0;
+                        slides.forEach(function(s,i){ if(i>0 && s.getBoundingClientRect().height < 40) invisibleCount++; });
+                    if(invisibleCount >= slides.length-2){
+                        enableFallback();
+                    }
+                }
+            }
+            document.addEventListener('DOMContentLoaded', function(){
+                setTimeout(checkSlides, 1400); // wait for slideshow init
+            });
+        })();
+        </script>
 </body>
 </html>
