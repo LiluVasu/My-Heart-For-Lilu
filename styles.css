@@ -1605,6 +1605,28 @@ body {
     }
 }
 
+/* GLOBAL DEBUG FOR ALL DEVICES - SHOULD WORK ON ANY SCREEN */
+.memory-slide .caption {
+    border: 10px solid red !important;
+    background: yellow !important;
+    margin: 2rem auto !important;
+    width: 80% !important;
+    text-align: center !important;
+    display: block !important;
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+    right: auto !important;
+}
+
+.memory-slide .caption-content {
+    border: 5px solid blue !important;
+    background: lightblue !important;
+    text-align: center !important;
+    padding: 2rem !important;
+    margin: 0 auto !important;
+}
+
 /* Xiaomi 11T Pro and other tall Android phones */
 @media (max-width: 430px) and (min-height: 800px) {
     /* ULTIMATE COMPREHENSIVE DEBUG - SEE ALL CONTAINERS */
