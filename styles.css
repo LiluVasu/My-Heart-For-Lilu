@@ -1514,7 +1514,7 @@ body {
         min-height: 100dvh;
         padding: 1rem 0.5rem 2rem;
         flex-direction: column;
-        justify-content: flex-start;
+        justify-content: center;
         align-items: center;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
@@ -1631,7 +1631,7 @@ body {
         overflow-y: auto !important;
         padding: 0.8rem 0.5rem 3rem !important;
         flex-direction: column !important;
-        justify-content: flex-start !important;
+        justify-content: center !important;
         align-items: center !important;
     }
     
