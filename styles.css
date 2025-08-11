@@ -20,6 +20,32 @@
         margin-left: auto !important;
         margin-right: auto !important;
     }
+    
+    /* CHAPTER SLIDES SPECIFIC FIXES */
+    .memory-slide .caption {
+        position: static !important;
+        transform: none !important;
+        width: 90% !important;
+        margin: 1rem auto !important;
+        left: auto !important;
+        bottom: auto !important;
+    }
+    
+    .memory-slide .caption-content {
+        text-align: center !important;
+        padding: 1rem !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+    }
+    
+    .memory-slide .caption-content h2,
+    .memory-slide .caption-content p,
+    .memory-slide .memory-quote {
+        text-align: center !important;
+        width: 100% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
 }
 
 /* === CSS CUSTOM PROPERTIES === */
@@ -1508,6 +1534,34 @@ body {
         margin-top: 1rem;
     }
     
+    /* FORCE CENTER ALL CHAPTER SLIDE CONTENT */
+    .memory-slide .caption {
+        position: static !important;
+        transform: none !important;
+        width: 88% !important;
+        margin: 1.2rem auto 1.5rem !important;
+        left: auto !important;
+        bottom: auto !important;
+    }
+    
+    .memory-slide .caption-content {
+        text-align: center !important;
+        padding: 1rem !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+    }
+    
+    .memory-slide .caption-content h2,
+    .memory-slide .caption-content p,
+    .memory-slide .timeline-marker,
+    .memory-slide .date,
+    .memory-slide .memory-quote {
+        text-align: center !important;
+        width: 100% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+    
     /* Heart speaks adjustments */
     .heart-speaks-content {
         padding: 1rem;
@@ -1569,6 +1623,34 @@ body {
         font-size: 0.85rem;
         padding: 0.6rem;
         margin-top: 0.8rem;
+    }
+    
+    /* FORCE CENTER FOR CHAPTER SLIDES ON XIAOMI */
+    .memory-slide .caption {
+        position: static !important;
+        transform: none !important;
+        width: 85% !important;
+        margin: 0.8rem auto 1rem !important;
+        left: auto !important;
+        bottom: auto !important;
+    }
+    
+    .memory-slide .caption-content {
+        text-align: center !important;
+        padding: 0.8rem !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+    }
+    
+    .memory-slide .caption-content h2,
+    .memory-slide .caption-content p,
+    .memory-slide .timeline-marker,
+    .memory-slide .date,
+    .memory-slide .memory-quote {
+        text-align: center !important;
+        width: 100% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
     
     /* Heart speaks mobile optimization */
