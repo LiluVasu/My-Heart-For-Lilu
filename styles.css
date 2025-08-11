@@ -1,3 +1,27 @@
+/* === CACHE BUSTER - FORCE CENTER TEXT === */
+@media (max-width: 768px) {
+    .apology-container,
+    .promise-container,
+    .heart-speaks-content,
+    .collage-container {
+        margin: 0 auto !important;
+        text-align: center !important;
+        width: 90% !important;
+        max-width: 90% !important;
+    }
+    
+    .apology-text,
+    .promise-text,
+    .promise-item,
+    .promise-item p,
+    .final-message {
+        text-align: center !important;
+        width: 100% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+
 /* === CSS CUSTOM PROPERTIES === */
 :root {
     --primary-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
@@ -729,14 +753,15 @@ body {
 }
 
 .promise-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: column !important;
+    text-align: center !important;
     margin-bottom: 1.5rem;
     animation: slideInPromise 0.8s ease-out forwards;
     opacity: 0;
+    width: 100% !important;
 }
 
 .promise-item:nth-child(1) { animation-delay: 0.2s; }
@@ -766,7 +791,9 @@ body {
     font-size: clamp(1rem, 2.5vw, 1.2rem);
     line-height: 1.6;
     color: var(--text-secondary);
-    text-align: center;
+    text-align: center !important;
+    width: 100% !important;
+    margin: 0 auto !important;
 }
 
 .final-message {
@@ -1341,19 +1368,30 @@ body {
     .promise-item p,
     .final-message p {
         font-size: 1rem;
-        text-align: center;
+        text-align: center !important;
+        width: 100% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
     
     .promise-item {
-        flex-direction: column;
-        text-align: center;
-        justify-content: center;
+        flex-direction: column !important;
+        text-align: center !important;
+        justify-content: center !important;
         margin-bottom: 1rem;
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
     }
     
     .promise-icon {
         margin-bottom: 0.5rem;
         margin-right: 0;
+    }
+    
+    .promise-text {
+        width: 100% !important;
+        text-align: center !important;
     }
     
     .nav {
@@ -1579,16 +1617,25 @@ body {
     }
     
     .promise-item {
-        flex-direction: column;
-        text-align: center;
-        justify-content: center;
+        flex-direction: column !important;
+        text-align: center !important;
+        justify-content: center !important;
         margin-bottom: 0.8rem;
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
     }
     
     .promise-icon {
         margin-bottom: 0.5rem;
         margin-right: 0;
         font-size: 1.8rem;
+    }
+    
+    .promise-item p {
+        text-align: center !important;
+        width: 100% !important;
+        margin: 0 auto !important;
     }
     
     /* Collage adjustments */
