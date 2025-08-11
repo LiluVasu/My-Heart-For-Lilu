@@ -1,3 +1,30 @@
+/* === NUCLEAR OPTION - FORCE ALL TEXT CENTER === */
+@media (max-width: 768px) {
+    /* Override EVERYTHING */
+    * {
+        text-align: center !important;
+    }
+    
+    .slide * {
+        text-align: center !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+    
+    .memory-slide * {
+        text-align: center !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        width: auto !important;
+    }
+    
+    .caption-content * {
+        text-align: center !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+
 /* === CACHE BUSTER - FORCE CENTER TEXT === */
 @media (max-width: 768px) {
     .apology-container,
@@ -1580,6 +1607,23 @@ body {
 
 /* Xiaomi 11T Pro and other tall Android phones */
 @media (max-width: 430px) and (min-height: 800px) {
+    /* NUCLEAR CENTERING FOR XIAOMI */
+    * {
+        text-align: center !important;
+    }
+    
+    .slide * {
+        text-align: center !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+    
+    .memory-slide * {
+        text-align: center !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+    
     .slide {
         height: auto !important;
         min-height: 100vh !important;
