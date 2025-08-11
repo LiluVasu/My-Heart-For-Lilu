@@ -1605,7 +1605,7 @@ body {
     }
 }
 
-/* GLOBAL DEBUG FOR ALL DEVICES - SHOULD WORK ON ANY SCREEN */
+/* FINAL CENTERING FIX - CLEAN VERSION */
 .memory-slide {
     display: flex !important;
     flex-direction: column !important;
@@ -1613,6 +1613,7 @@ body {
     justify-content: center !important;
     width: 100% !important;
     padding: 1rem !important;
+    min-height: 100vh !important;
 }
 
 .memory-slide .image-container {
@@ -1623,8 +1624,6 @@ body {
 }
 
 .memory-slide .caption {
-    border: 10px solid red !important;
-    background: yellow !important;
     width: 90% !important;
     max-width: 500px !important;
     text-align: center !important;
@@ -1637,11 +1636,14 @@ body {
 }
 
 .memory-slide .caption-content {
-    border: 5px solid blue !important;
-    background: lightblue !important;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
     text-align: center !important;
     padding: 2rem !important;
     margin: 0 auto !important;
+    box-shadow: var(--shadow-medium);
 }
 
 /* Xiaomi 11T Pro and other tall Android phones */
