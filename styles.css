@@ -1424,6 +1424,7 @@ body {
         padding: 1.2rem;
         font-size: 1rem;
         line-height: 1.5;
+        text-align: center;
         background: var(--glass-bg);
         backdrop-filter: blur(20px);
         border-radius: var(--border-radius);
@@ -1487,6 +1488,7 @@ body {
         padding: 1rem;
         font-size: 0.95rem;
         line-height: 1.5;
+        text-align: center;
     }
     
     .caption h2 {
@@ -1563,6 +1565,7 @@ body {
     .caption-content {
         padding: 0.8rem;
         font-size: 0.9rem;
+        text-align: center;
     }
     
     .memory-quote {
@@ -1617,6 +1620,7 @@ body {
     
     .caption-content {
         padding: 1rem;
+        text-align: center;
     }
 }
 
