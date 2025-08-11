@@ -1189,17 +1189,31 @@ body {
 @media (max-width: 768px) {
     /* General slide adjustments */
     .slide {
-        position: relative; /* keep slideshow logic working */
+        position: absolute; /* retain active toggling */
+        inset: 0;
+        width: 100%;
         height: auto;
         min-height: 100vh;
-        padding: 1.2rem 0.75rem 2.5rem;
+        padding: 1.1rem 0.75rem 2.4rem;
+        display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
-        gap: 1.1rem;
+        gap: 1rem;
+        background: transparent; /* avoid pink fill */
     }
+    .slide:not(.active){
+        opacity:0 !important;
+        visibility:hidden !important;
+        pointer-events:none;
+    }
+    .slide.active{opacity:1 !important; visibility:visible !important; pointer-events:auto;}
+
+    /* Ensure stacking context so active slide content sits above previous */
+    .slide.active { z-index: 5; }
+    #slideshow, .slideshow-container { height: 100vh; }
 
     /* Memory slides */
     .memory-slide .image-container {
