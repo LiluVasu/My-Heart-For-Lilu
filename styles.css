@@ -1413,8 +1413,8 @@ body {
     .caption {
         position: static !important;
         transform: none !important;
-        width: 95% !important;
-        max-width: none !important;
+        width: 90% !important;
+        max-width: 600px !important;
         margin: 1.5rem auto 2rem !important;
         bottom: auto !important;
         left: auto !important;
@@ -1480,7 +1480,8 @@ body {
         position: static !important;
         bottom: auto !important;
         transform: none !important;
-        width: 96% !important;
+        width: 90% !important;
+        max-width: 500px !important;
         margin: 1rem auto 2rem !important;
     }
     
