@@ -8,6 +8,9 @@ class MemorySlideshow {
         this.autoPlayInterval = null;
         this.touchStartX = 0;
         this.touchEndX = 0;
+        this.music = null;
+        this.musicToggle = null;
+        this.musicPlaying = false;
         
         this.init();
     }
@@ -27,6 +30,7 @@ class MemorySlideshow {
         this.setupEventListeners();
         this.setupKeyboardNavigation();
         this.setupTouchNavigation();
+        this.setupMusicPlayer();
         this.preloadImages();
     }
     
@@ -38,6 +42,8 @@ class MemorySlideshow {
         this.nextBtn = document.querySelector('.next');
         this.slides = document.querySelectorAll('.slide');
         this.dots = document.querySelectorAll('.dot');
+        this.music = document.getElementById('backgroundMusic');
+        this.musicToggle = document.getElementById('musicToggle');
         
         // Check if all required elements exist
         if (!this.intro || !this.slideshow || !this.enterBtn || !this.prevBtn || !this.nextBtn) {
@@ -103,39 +109,43 @@ class MemorySlideshow {
     
     setupKeyboardNavigation() {
         document.addEventListener('keydown', (e) => {
-            if (this.intro.classList.contains('hidden')) {
-                switch(e.key) {
-                    case 'ArrowLeft':
-                        e.preventDefault();
-                        this.previousSlide();
-                        break;
-                    case 'ArrowRight':
-                        e.preventDefault();
-                        this.nextSlide();
-                        break;
-                    case 'Escape':
-                        this.exitSlideshow();
-                        break;
-                    case ' ':
-                        e.preventDefault();
-                        this.toggleAutoPlay();
-                        break;
-                }
-            } else if (e.key === 'Enter') {
-                this.enterSlideshow();
+            if (this.slideshow.classList.contains('hidden')) return;
+            
+            switch(e.key) {
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    e.preventDefault();
+                    this.previousSlide();
+                    break;
+                case 'ArrowRight':
+                case 'ArrowDown':
+                case ' ':
+                    e.preventDefault();
+                    this.nextSlide();
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    this.goToSlide(0);
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    this.goToSlide(this.slides.length - 1);
+                    break;
             }
         });
     }
     
     setupTouchNavigation() {
-        this.slideshow.addEventListener('touchstart', (e) => {
-            this.touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-        
-        this.slideshow.addEventListener('touchend', (e) => {
-            this.touchEndX = e.changedTouches[0].screenX;
-            this.handleSwipe();
-        }, { passive: true });
+        if (this.slideshow) {
+            this.slideshow.addEventListener('touchstart', (e) => {
+                this.touchStartX = e.changedTouches[0].screenX;
+            });
+            
+            this.slideshow.addEventListener('touchend', (e) => {
+                this.touchEndX = e.changedTouches[0].screenX;
+                this.handleSwipe();
+            });
+        }
     }
     
     handleSwipe() {
@@ -165,12 +175,14 @@ class MemorySlideshow {
         ripple.style.width = ripple.style.height = size + 'px';
         ripple.style.left = x + 'px';
         ripple.style.top = y + 'px';
+        ripple.style.transform = 'scale(0)';
+        ripple.style.opacity = '0.6';
         
-        button.classList.add('ripple-active');
+        // Force reflow
+        ripple.offsetHeight;
         
-        setTimeout(() => {
-            button.classList.remove('ripple-active');
-        }, 600);
+        ripple.style.transform = 'scale(1)';
+        ripple.style.opacity = '0';
     }
     
     preloadImages() {
@@ -183,8 +195,83 @@ class MemorySlideshow {
             }
         });
     }
+
+    setupMusicPlayer() {
+        if (!this.music || !this.musicToggle) {
+            console.log('Music elements not found');
+            return;
+        }
+
+        // Set initial music properties
+        this.music.volume = 0.3; // Start at 30% volume
+        this.music.loop = true;
+
+        // Music toggle button event listener
+        this.musicToggle.addEventListener('click', () => {
+            this.toggleMusic();
+        });
+
+        // Try to play music when entering slideshow (autoplay)
+        this.music.addEventListener('canplaythrough', () => {
+            console.log('Music is ready to play');
+        });
+
+        this.music.addEventListener('error', (e) => {
+            console.error('Music loading error:', e);
+            this.musicToggle.style.display = 'none';
+        });
+
+        // Handle autoplay restrictions
+        this.music.addEventListener('play', () => {
+            this.musicPlaying = true;
+            this.musicToggle.classList.remove('muted');
+        });
+
+        this.music.addEventListener('pause', () => {
+            this.musicPlaying = false;
+            this.musicToggle.classList.add('muted');
+        });
+    }
+
+    toggleMusic() {
+        if (!this.music) return;
+
+        if (this.musicPlaying) {
+            this.music.pause();
+        } else {
+            // Handle autoplay restrictions with user interaction
+            const playPromise = this.music.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log('Music started playing');
+                }).catch(error => {
+                    console.log('Music autoplay was prevented:', error);
+                    this.musicToggle.classList.add('muted');
+                });
+            }
+        }
+    }
+
+    startMusicOnEnter() {
+        // Try to start music when entering slideshow (user has interacted)
+        if (this.music && !this.musicPlaying) {
+            const playPromise = this.music.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log('Music started on enter');
+                    this.musicPlaying = true;
+                    this.musicToggle.classList.remove('muted');
+                }).catch(error => {
+                    console.log('Music could not start:', error);
+                });
+            }
+        }
+    }
     
     enterSlideshow() {
+        // Start music when user interacts
+        this.startMusicOnEnter();
+        
         // Trigger heart explosion effect
         if (window.originalCreateHeartExplosion) {
             window.originalCreateHeartExplosion();
@@ -212,79 +299,94 @@ class MemorySlideshow {
         this.pauseAutoPlay();
         this.slideshow.classList.add('hidden');
         this.intro.classList.remove('hidden');
-        this.intro.style.animation = 'introFadeIn 1s ease-out';
+        this.slideIndex = 0;
     }
     
     showSlide(index) {
-        if (this.isTransitioning) return;
+        if (!this.slides || this.slides.length === 0) return;
         
-        this.isTransitioning = true;
+        // Ensure index is within bounds
+        index = Math.max(0, Math.min(index, this.slides.length - 1));
+        this.slideIndex = index;
         
-        // Handle index wrapping
-        if (index >= this.slides.length) {
-            this.slideIndex = 0;
-        } else if (index < 0) {
-            this.slideIndex = this.slides.length - 1;
-        } else {
-            this.slideIndex = index;
-        }
-        
-        // Update slides
+        // Hide all slides
         this.slides.forEach((slide, i) => {
             slide.classList.remove('active');
-            if (i === this.slideIndex) {
-                setTimeout(() => {
-                    slide.classList.add('active');
-                    this.animateCaption(slide);
-                }, 100);
-            }
+            slide.style.transform = `translateX(${(i - index) * 100}%)`;
         });
         
-        // Update dots
-        if (this.dots && this.dots.length > 0) {
+        // Show current slide
+        if (this.slides[index]) {
+            this.slides[index].classList.add('active');
+        }
+        
+        // Update progress dots
+        if (this.dots) {
             this.dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === this.slideIndex);
+                dot.classList.toggle('active', i === index);
             });
         }
         
-        // Reset transition flag
-        setTimeout(() => {
-            this.isTransitioning = false;
-        }, 400);
+        // Add slide-specific animations
+        this.addSlideAnimations(index);
     }
     
-    animateCaption(slide) {
-        const caption = slide.querySelector('.caption-content');
-        if (caption) {
-            caption.style.animation = 'none';
-            setTimeout(() => {
-                caption.style.animation = 'captionSlideUp 0.8s ease-out';
-            }, 50);
+    addSlideAnimations(index) {
+        const currentSlide = this.slides[index];
+        if (!currentSlide) return;
+        
+        // Reset animations
+        const animatedElements = currentSlide.querySelectorAll('.slide-content > *');
+        animatedElements.forEach((el, i) => {
+            el.style.animation = 'none';
+            el.offsetHeight; // Force reflow
+            el.style.animation = `slideContentFadeIn 0.8s ease-out ${i * 0.2}s both`;
+        });
+        
+        // Special animations for specific slides
+        if (currentSlide.classList.contains('apology-slide')) {
+            const heart = currentSlide.querySelector('.apology-heart');
+            if (heart) {
+                heart.style.animation = 'heartPulse 2s ease-in-out infinite';
+            }
+        }
+        
+        if (currentSlide.classList.contains('promise-slide')) {
+            const hearts = currentSlide.querySelectorAll('.floating-hearts .heart');
+            hearts.forEach((heart, i) => {
+                heart.style.animation = `floatUp 3s ease-in-out ${i * 0.5}s infinite`;
+            });
         }
     }
     
     nextSlide() {
-        if (!this.isTransitioning) {
-            this.showSlide(this.slideIndex + 1);
-        }
+        if (this.isTransitioning) return;
+        const nextIndex = (this.slideIndex + 1) % this.slides.length;
+        this.goToSlide(nextIndex);
     }
     
     previousSlide() {
-        if (!this.isTransitioning) {
-            this.showSlide(this.slideIndex - 1);
-        }
+        if (this.isTransitioning) return;
+        const prevIndex = this.slideIndex === 0 ? this.slides.length - 1 : this.slideIndex - 1;
+        this.goToSlide(prevIndex);
     }
     
     goToSlide(index) {
-        if (!this.isTransitioning && index !== this.slideIndex) {
-            this.showSlide(index);
-        }
+        if (this.isTransitioning || index === this.slideIndex) return;
+        
+        this.isTransitioning = true;
+        this.showSlide(index);
+        
+        setTimeout(() => {
+            this.isTransitioning = false;
+        }, 600);
     }
     
     startAutoPlay() {
+        this.pauseAutoPlay();
         this.autoPlayInterval = setInterval(() => {
             this.nextSlide();
-        }, 12000); // Slower for reading emotional content - 12 seconds
+        }, 8000); // 8 seconds per slide
     }
     
     pauseAutoPlay() {
@@ -299,350 +401,96 @@ class MemorySlideshow {
             this.startAutoPlay();
         }
     }
-    
-    toggleAutoPlay() {
-        if (this.autoPlayInterval) {
-            this.pauseAutoPlay();
-        } else {
-            this.startAutoPlay();
-        }
-    }
 }
 
-// === PARTICLE ANIMATION SYSTEM ===
-class ParticleSystem {
-    constructor() {
-        this.particles = document.querySelectorAll('.particle');
-        this.init();
-    }
-    
-    init() {
-        this.particles.forEach(particle => {
-            this.randomizeParticle(particle);
-        });
-    }
-    
-    randomizeParticle(particle) {
-        const size = Math.random() * 5 + 2; // 2-7px
-        const opacity = Math.random() * 0.6 + 0.2; // 0.2-0.8
-        const duration = Math.random() * 6 + 6; // 6-12s
-        const delay = Math.random() * 3; // 0-3s
-        
-        particle.style.width = size + 'px';
-        particle.style.height = size + 'px';
-        particle.style.opacity = opacity;
-        particle.style.animationDuration = duration + 's';
-        particle.style.animationDelay = delay + 's';
-    }
-}
-
-// === ENHANCED ANIMATIONS ===
-function addCustomAnimations() {
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes introFadeOut {
-            from { 
-                opacity: 1; 
-                transform: translateY(0) scale(1); 
-            }
-            to { 
-                opacity: 0; 
-                transform: translateY(-30px) scale(0.95); 
-            }
-        }
-        
-        @keyframes slideShowFadeIn {
-            from { 
-                opacity: 0; 
-                transform: scale(1.05); 
-            }
-            to { 
-                opacity: 1; 
-                transform: scale(1); 
-            }
-        }
-        
-        .ripple-active .button-ripple {
-            animation: rippleExpand 0.6s ease-out;
-        }
-        
-        @keyframes rippleExpand {
-            from {
-                width: 0;
-                height: 0;
-                opacity: 1;
-            }
-            to {
-                width: 300px;
-                height: 300px;
-                opacity: 0;
-            }
-        }
-        
-        .image-loaded img {
-            animation: imageReveal 1s ease-out;
-        }
-        
-        @keyframes imageReveal {
-            from {
-                opacity: 0;
-                transform: scale(1.1);
-                filter: blur(5px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-                filter: blur(0);
-            }
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-// === PERFORMANCE OPTIMIZATIONS ===
-function optimizePerformance() {
-    // Preload critical resources
-    const preloadLinks = [
-        'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&display=swap'
-    ];
-    
-    preloadLinks.forEach(href => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'style';
-        link.href = href;
-        document.head.appendChild(link);
-    });
-    
-    // Optimize images with intersection observer
-    const imageObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.classList.add('optimized');
-                imageObserver.unobserve(img);
-            }
-        });
-    });
-    
-    document.querySelectorAll('img').forEach(img => {
-        imageObserver.observe(img);
-    });
-}
-
-// === INITIALIZATION ===
+// Initialize slideshow when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    // iPhone/iOS Detection and Optimizations
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isIPhone15 = /iPhone/.test(navigator.userAgent) && window.screen.height >= 852;
-    
-    if (isIOS) {
-        document.body.classList.add('ios-device');
-        
-        // Prevent zoom on double tap
-        document.addEventListener('touchend', (e) => {
-            const now = (new Date()).getTime();
-            if (now - this.lastTouchEnd <= 300) {
-                e.preventDefault();
-            }
-            this.lastTouchEnd = now;
-        }, false);
-        
-        // Fix viewport height for iOS
-        const setVH = () => {
-            const vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-        };
-        window.addEventListener('resize', setVH);
-        setVH();
-    }
-    
-    if (isIPhone15) {
-        document.body.classList.add('iphone15');
-        
-        // Add special iPhone 15 optimizations
-        const style = document.createElement('style');
-        style.textContent = `
-            @media (max-width: 430px) {
-                .slide {
-                    padding-top: env(safe-area-inset-top);
-                    padding-bottom: env(safe-area-inset-bottom);
-                }
-                
-                .nav {
-                    top: calc(50% + env(safe-area-inset-top));
-                }
-                
-                .progress-bar {
-                    bottom: calc(3% + env(safe-area-inset-bottom));
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    // Add custom animations
-    addCustomAnimations();
-    
-    // Initialize performance optimizations
-    optimizePerformance();
-    
-    // Initialize particle system
-    new ParticleSystem();
-    
-    // Initialize slideshow
-    try {
-        new MemorySlideshow();
-        console.log('Memory slideshow initialized successfully');
-    } catch (error) {
-        console.error('Failed to initialize slideshow:', error);
-    }
-    
-    // Add special love effects
-    addLoveEffects();
-    
-    // Add loading complete class to body
-    setTimeout(() => {
-        document.body.classList.add('loaded');
-    }, 100);
+    window.memorySlideshow = new MemorySlideshow();
 });
 
-// === ACCESSIBILITY ENHANCEMENTS ===
-document.addEventListener('DOMContentLoaded', () => {
-    // Add focus indicators for keyboard navigation
-    const focusableElements = document.querySelectorAll('button, .dot');
+// Heart explosion effect
+function createHeartExplosion() {
+    const heartContainer = document.createElement('div');
+    heartContainer.style.position = 'fixed';
+    heartContainer.style.top = '0';
+    heartContainer.style.left = '0';
+    heartContainer.style.width = '100%';
+    heartContainer.style.height = '100%';
+    heartContainer.style.pointerEvents = 'none';
+    heartContainer.style.zIndex = '9999';
     
-    focusableElements.forEach(element => {
-        element.addEventListener('focus', () => {
-            element.classList.add('keyboard-focused');
-        });
-        
-        element.addEventListener('blur', () => {
-            element.classList.remove('keyboard-focused');
-        });
-    });
+    const hearts = ['💕', '💖', '💗', '💝', '💘', '💓', '💞', '💟'];
     
-    // Announce slide changes to screen readers
-    const slideshow = document.getElementById('slideshow');
-    if (slideshow) {
-        const announcement = document.createElement('div');
-        announcement.setAttribute('aria-live', 'polite');
-        announcement.setAttribute('aria-atomic', 'true');
-        announcement.style.position = 'absolute';
-        announcement.style.left = '-10000px';
-        announcement.style.width = '1px';
-        announcement.style.height = '1px';
-        announcement.style.overflow = 'hidden';
-        slideshow.appendChild(announcement);
-        
-        // Update announcement when slides change
-        const observer = new MutationObserver(() => {
-            const activeSlide = document.querySelector('.slide.active');
-            if (activeSlide) {
-                const titleEl = activeSlide.querySelector('h2');
-                const dateEl = activeSlide.querySelector('.date');
-                if (titleEl && dateEl) {
-                    announcement.textContent = `Now showing: ${titleEl.textContent}, ${dateEl.textContent}`;
-                }
-            }
-        });
-        
-        observer.observe(slideshow, {
-            attributes: true,
-            subtree: true,
-            attributeFilter: ['class']
-        });
-    }
-});
-
-// === SPECIAL LOVE EFFECTS ===
-function addLoveEffects() {
-    // Create heart explosion effect when entering slideshow
-    function createHeartExplosion() {
-        const heartContainer = document.createElement('div');
-        heartContainer.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1000;
-        `;
-        
-        for (let i = 0; i < 15; i++) {
-            const heart = document.createElement('div');
-            heart.innerHTML = ['💕', '💖', '💝', '💗', '💓'][Math.floor(Math.random() * 5)];
-            heart.style.cssText = `
-                position: absolute;
-                font-size: ${Math.random() * 20 + 15}px;
-                left: ${Math.random() * 100}%;
-                top: ${Math.random() * 100}%;
-                animation: heartExplode ${Math.random() * 3 + 2}s ease-out forwards;
-                pointer-events: none;
-            `;
-            heartContainer.appendChild(heart);
-        }
-        
-        document.body.appendChild(heartContainer);
-        
-        setTimeout(() => {
-            document.body.removeChild(heartContainer);
-        }, 5000);
+    for (let i = 0; i < 20; i++) {
+        const heart = document.createElement('div');
+        heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        heart.style.position = 'absolute';
+        heart.style.fontSize = Math.random() * 30 + 20 + 'px';
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.top = Math.random() * 100 + '%';
+        heart.style.animation = `heartExplode ${Math.random() * 2 + 3}s ease-out forwards`;
+        heart.style.animationDelay = Math.random() * 1 + 's';
+        heartContainer.appendChild(heart);
     }
     
-    // Add heart explosion CSS
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes heartExplode {
-            0% {
-                opacity: 1;
-                transform: scale(0) rotate(0deg);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.2) rotate(180deg);
-            }
-            100% {
-                opacity: 0;
-                transform: scale(0.5) rotate(360deg) translateY(-100px);
-            }
-        }
-        
-        .ios-device {
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        .ios-device body {
-            height: 100vh;
-            height: calc(var(--vh, 1vh) * 100);
-        }
-        
-        .love-pulse {
-            animation: lovePulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes lovePulse {
-            0%, 100% {
-                transform: scale(1);
-                filter: hue-rotate(0deg);
-            }
-            50% {
-                transform: scale(1.05);
-                filter: hue-rotate(10deg);
-            }
-        }
-    `;
-    document.head.appendChild(style);
+    document.body.appendChild(heartContainer);
     
-    // Trigger heart explosion when entering slideshow
-    window.originalCreateHeartExplosion = createHeartExplosion;
-    
-    // Add love pulse to certain elements
     setTimeout(() => {
-        const loveElements = document.querySelectorAll('.memories-text, .apology-heart, .promise-heart');
-        loveElements.forEach(element => {
-            element.classList.add('love-pulse');
-        });
-    }, 2000);
+        document.body.removeChild(heartContainer);
+    }, 5000);
 }
+
+// Add heart explosion CSS
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes heartExplode {
+        0% {
+            opacity: 1;
+            transform: scale(0) rotate(0deg);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1.2) rotate(180deg);
+        }
+        100% {
+            opacity: 0;
+            transform: scale(0.5) rotate(360deg) translateY(-100px);
+        }
+    }
+    
+    .ios-device {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .ios-device body {
+        height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);
+    }
+    
+    .love-pulse {
+        animation: lovePulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes lovePulse {
+        0%, 100% {
+            transform: scale(1);
+            filter: hue-rotate(0deg);
+        }
+        50% {
+            transform: scale(1.05);
+            filter: hue-rotate(10deg);
+        }
+    }
+`;
+document.head.appendChild(style);
+
+// Trigger heart explosion when entering slideshow
+window.originalCreateHeartExplosion = createHeartExplosion;
+
+// Add love pulse to certain elements
+setTimeout(() => {
+    const loveElements = document.querySelectorAll('.memories-text, .apology-heart, .promise-heart');
+    loveElements.forEach(element => {
+        element.classList.add('love-pulse');
+    });
+}, 2000);

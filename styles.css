@@ -47,6 +47,62 @@ body {
     touch-action: manipulation;
 }
 
+/* === MUSIC TOGGLE BUTTON === */
+.music-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 1000;
+    transition: var(--transition-smooth);
+    box-shadow: var(--shadow-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.music-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-strong);
+}
+
+.music-toggle:active {
+    transform: scale(0.95);
+}
+
+.music-toggle .music-off {
+    display: none;
+}
+
+.music-toggle.muted .music-on {
+    display: none;
+}
+
+.music-toggle.muted .music-off {
+    display: inline;
+}
+
+.music-toggle.muted {
+    opacity: 0.6;
+}
+
+/* iPhone 15 safe area adjustments */
+@supports (padding: max(0px)) {
+    .music-toggle {
+        top: max(20px, env(safe-area-inset-top, 20px));
+        right: max(20px, env(safe-area-inset-right, 20px));
+    }
+}
+
 /* === UTILITY CLASSES === */
 .hidden {
     display: none !important;
